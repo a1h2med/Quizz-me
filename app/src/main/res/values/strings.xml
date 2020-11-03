@@ -3,5 +3,8 @@
     <string name="hint_id">Enter Your Teacher\'s ID</string>
     <string name="next">Next</string>
     <string name="loading">Loading....</string>
+    <string name="firstName">First Time ?</string>
+    <string name="enterYourName">Enter your name</string>
+    <string name="uploadRecord">upload your voice</string>
 
 </resources>
