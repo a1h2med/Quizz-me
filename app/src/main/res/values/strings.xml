@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Quizz-me</string>
+    <string name="hint_id">Enter Your Teacher\'s ID</string>
+    <string name="next">Next</string>
+    <string name="loading">Loading....</string>
+
+</resources>
