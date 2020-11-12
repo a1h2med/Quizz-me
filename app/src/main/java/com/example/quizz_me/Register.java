@@ -6,50 +6,49 @@ import android.speech.RecognizerIntent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textfield.TextInputLayout;
+import com.sdsmdg.tastytoast.TastyToast;
 
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class SignIn extends AppCompatActivity {
+public class Register extends AppCompatActivity {
     TextInputLayout textField;
-    ArrayList<String> resultedSpeech;
     EditText editText;
-    TextView textView;
-    Button nextButton;
+    Button nextButton, uploadButton;
     private static final int REQUEST_CODE_SPEECH_INPUT = 1000;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.sign_in);
-        textField = findViewById(R.id.name);
-        editText = findViewById(R.id.nameTextField);
-        nextButton = findViewById(R.id.signingNext);
-        textView = findViewById(R.id.firstTime);
+        setContentView(R.layout.register);
+        textField = findViewById(R.id.userName);
+        editText = findViewById(R.id.usernameTextField);
+        nextButton = findViewById(R.id.registerNext);
+        uploadButton = findViewById(R.id.upload_audio);
         textField.setEndIconOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 editText.setText("");
             }
         });
+
+        uploadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //ToDo: Upload user voice to database.
+                TastyToast.makeText(getApplicationContext(), "please make sure that you are in a quite place.", TastyToast.LENGTH_LONG, TastyToast.WARNING);
+                speak();
+            }
+        });
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //ToDo: Load voice from online database
-                speak();
-                //ToDo: If matched load quiz, else ask him to rerecord.
-            }
-        });
-        textView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //ToDo: navigate to registration page
+                //ToDo: Take the user to the quiz.
             }
         });
     }
@@ -71,9 +70,9 @@ public class SignIn extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_SPEECH_INPUT) {
             if (resultCode == RESULT_OK && null != data) {
-                resultedSpeech = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                //ToDo: Upload text here and save it to database locally to compare it.
             }
         }
     }
-
 }

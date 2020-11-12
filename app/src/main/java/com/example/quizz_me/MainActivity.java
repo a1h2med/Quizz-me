@@ -1,27 +1,30 @@
 package com.example.quizz_me;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 
 import android.app.ProgressDialog;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.google.android.material.textfield.TextInputLayout;
 
 public class MainActivity extends AppCompatActivity {
-    TextInputLayout textField;
-    EditText editText;
-    Button idButton;
-    ProgressDialog progressDialog;
+    private EditText editText;
+    private ProgressDialog progressDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        textField = findViewById(R.id.textField);
+        TextInputLayout textField = findViewById(R.id.textField);
         editText = findViewById(R.id.idText);
-        idButton = findViewById(R.id.Next);
+        Button idButton = findViewById(R.id.Next);
         textField.setEndIconOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

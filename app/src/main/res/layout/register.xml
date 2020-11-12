@@ -24,7 +24,22 @@
             android:id="@+id/upload_audio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="upload your voice" />
+            android:layout_margin="20dp"
+            android:background="@drawable/rectangle_button"
+            android:text="@string/uploadRecord"
+            android:textColor="#FFFFFF" />
+
+        <Button
+            android:id="@+id/registerNext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_margin="10dp"
+            android:background="@drawable/round_button"
+            android:gravity="center"
+            android:text="@string/next"
+            android:textColor="#FFFFFF" />
+
 
     </LinearLayout>
 </ScrollView>
