@@ -49,7 +49,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginBottom="32dp"
-        android:background="#343142"
+        android:background="@drawable/rounded_corners"
         android:gravity="center"
         android:text="10"
         android:textColor="#FFFFFF"
