@@ -131,6 +131,7 @@ public class QuizQuestionsActivity extends AppCompatActivity implements View.OnC
         }
         else {
             Intent intent = new Intent(QuizQuestionsActivity.this, showFinalScore.class);
+            intent.putExtra("SCORE", String.valueOf(score)+"/"+String.valueOf(questionsList.size()));
             startActivity(intent);
             QuizQuestionsActivity.this.finish();
         }

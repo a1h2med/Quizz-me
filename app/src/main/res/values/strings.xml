@@ -8,6 +8,7 @@
     <string name="uploadRecord">upload your voice</string>
     <string name="logoDescription">Quiz-Me Application</string>
     <string name="logoName">Quiz Me</string>
-
+    <string name="score">SCORE</string>
+    <string name="scoreValue">5/10</string>
 
 </resources>
