@@ -3,12 +3,14 @@
     <string name="hint_id">Enter Your Teacher\'s ID</string>
     <string name="next">Next</string>
     <string name="loading">Loading....</string>
-    <string name="firstName">First Time ?</string>
+    <string name="firstName">Register.</string>
     <string name="enterYourName">Enter your name</string>
+    <string name="enterYourPassword">Enter your password</string>
     <string name="uploadRecord">upload your voice</string>
     <string name="logoDescription">Quiz-Me Application</string>
     <string name="logoName">Quiz Me</string>
     <string name="score">SCORE</string>
     <string name="scoreValue">5/10</string>
+    <string name="forgotPassword">Forgot your password?</string>
 
 </resources>

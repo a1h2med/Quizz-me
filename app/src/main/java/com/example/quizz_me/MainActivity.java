@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
@@ -34,19 +35,21 @@ public class MainActivity extends AppCompatActivity {
         idButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                progressDialog = new ProgressDialog(MainActivity.this);
-                progressDialog.show();
-                progressDialog.setContentView(R.layout.progress_dialog);
-                progressDialog.getWindow().setBackgroundDrawableResource(
-                        android.R.color.transparent
-                );
+//                progressDialog = new ProgressDialog(MainActivity.this);
+//                progressDialog.show();
+//                progressDialog.setContentView(R.layout.progress_dialog);
+//                progressDialog.getWindow().setBackgroundDrawableResource(
+//                        android.R.color.transparent
+//                );
+                Intent intent = new Intent(MainActivity.this, SignIn.class);
+                startActivity(intent);
             }
         });
     }
 
-    @Override
-    public void onBackPressed(){
-        progressDialog.dismiss();
-    }
+//    @Override
+//    public void onBackPressed(){
+//        progressDialog.dismiss();
+//    }
 
 }

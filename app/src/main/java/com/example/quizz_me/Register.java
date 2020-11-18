@@ -20,6 +20,7 @@ import java.util.Locale;
 public class Register extends AppCompatActivity {
     TextInputLayout textField;
     EditText editText;
+    private int flag = 0;
     Button nextButton, uploadButton;
     private static final int REQUEST_CODE_SPEECH_INPUT = 1000;
     @Override
@@ -40,7 +41,6 @@ public class Register extends AppCompatActivity {
         uploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //ToDo: Upload user voice to database.
                 TastyToast.makeText(getApplicationContext(), "please make sure that you are in a quite place.", TastyToast.LENGTH_LONG, TastyToast.WARNING);
                 speak();
             }
@@ -48,7 +48,13 @@ public class Register extends AppCompatActivity {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //ToDo: Take the user to the quiz.
+                if (flag == 1) {
+                    Intent intent = new Intent(Register.this, QuizQuestionsActivity.class);
+                    startActivity(intent);
+                }
+                else {
+                    TastyToast.makeText(getApplicationContext(), "please record your voice first.", TastyToast.LENGTH_LONG, TastyToast.ERROR);
+                }
             }
         });
     }
@@ -72,6 +78,7 @@ public class Register extends AppCompatActivity {
             if (resultCode == RESULT_OK && null != data) {
                 ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                 //ToDo: Upload text here and save it to database locally to compare it.
+                flag = 1;
             }
         }
     }

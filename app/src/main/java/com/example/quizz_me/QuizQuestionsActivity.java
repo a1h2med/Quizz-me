@@ -1,5 +1,6 @@
 package com.example.quizz_me;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -15,6 +16,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.sdsmdg.tastytoast.TastyToast;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +33,7 @@ public class QuizQuestionsActivity extends AppCompatActivity implements View.OnC
     private List<questionModel> questionsList;
     private CountDownTimer countDownTimer;
     private List<String> userAnswers;
+    private FirebaseFirestore firestore;
     private int questionNumber = 0, score = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,17 +52,34 @@ public class QuizQuestionsActivity extends AppCompatActivity implements View.OnC
         option3.setOnClickListener(this);
         option4.setOnClickListener(this);
 
+        firestore = FirebaseFirestore.getInstance();
+
         getQuestionsList();
     }
 
     private void getQuestionsList(){
         questionsList = new ArrayList<>();
-        questionsList.add(new questionModel("Question 1", "A", "B", "C", "D", "A"));
-        questionsList.add(new questionModel("Question 2", "A", "B", "C", "D", "A"));
-        questionsList.add(new questionModel("Question 3", "A", "B", "C", "D", "A"));
-        questionsList.add(new questionModel("Question 4", "A", "B", "C", "D", "A"));
-
-        setQuestionList();
+//        questionsList.add(new questionModel("Question 1", "A", "B", "C", "D", "A"));
+//        questionsList.add(new questionModel("Question 2", "A", "B", "C", "D", "A"));
+//        questionsList.add(new questionModel("Question 3", "A", "B", "C", "D", "A"));
+//        questionsList.add(new questionModel("Question 4", "A", "B", "C", "D", "A"));
+        firestore.collection("Quiz-me").document("Questions").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()){
+                   DocumentSnapshot questions = task.getResult();
+                   questionsList.add(new questionModel(questions.getString("Question"),
+                           questions.getString("A"),
+                           questions.getString("B"),
+                           questions.getString("C"),
+                           questions.getString("D"),
+                           questions.getString("Answer")));
+                    setQuestionList();
+                } else{
+                    TastyToast.makeText(getApplicationContext(), task.getException().getMessage(), TastyToast.LENGTH_LONG, TastyToast.ERROR);
+                }
+            }
+        });
     }
     @SuppressLint("SetTextI18n")
     private void setQuestionList(){

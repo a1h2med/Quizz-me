@@ -49,7 +49,8 @@ public class SignIn extends AppCompatActivity {
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //ToDo: navigate to registration page
+                Intent intent = new Intent(SignIn.this, Register.class);
+                startActivity(intent);
             }
         });
     }
