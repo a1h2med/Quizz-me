@@ -10,6 +10,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".showFinalScore"></activity>
+        <activity android:name=".SignIn"></activity>
+        <activity android:name=".Register"></activity>
         <activity android:name=".QuizQuestionsActivity" />
         <activity
             android:name=".SplashActivity"
