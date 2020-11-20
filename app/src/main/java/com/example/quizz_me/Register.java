@@ -1,38 +1,50 @@
 package com.example.quizz_me;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.media.MediaRecorder;
+import android.net.Uri;
 import android.os.Bundle;
-import android.speech.RecognizerIntent;
+import android.os.Environment;
+import android.util.Log;
 import android.util.Patterns;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.sdsmdg.tastytoast.TastyToast;
 
-import java.util.ArrayList;
-import java.util.Locale;
+import java.io.File;
+import java.io.IOException;
 
 public class Register extends AppCompatActivity {
     TextInputLayout textField, textFieldPass;
     EditText editText, editTextPassword;
     private FirebaseAuth mAuth;
     private ProgressBar progressBar;
+    private ProgressDialog mProgress;
     private int flag = 0;
     Button nextButton, uploadButton;
+    private MediaRecorder recorder;
+    private String fileName;
+    private StorageReference storageReference;
+    private static final String LOG_TAG = "Record_Log";
     private static final int REQUEST_CODE_SPEECH_INPUT = 1000;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +59,10 @@ public class Register extends AppCompatActivity {
         textFieldPass = findViewById(R.id.password);
         progressBar = findViewById(R.id.progressBar);
         mAuth = FirebaseAuth.getInstance();
+        fileName = Environment.getExternalStorageDirectory().getAbsolutePath();
+        fileName += "/recorded_audio.3gp";
+        storageReference = FirebaseStorage.getInstance().getReference();
+        mProgress = new ProgressDialog(this);
 
         textField.setEndIconOnClickListener(new View.OnClickListener() {
             @Override
@@ -69,18 +85,24 @@ public class Register extends AppCompatActivity {
             }
         });
 
-        uploadButton.setOnClickListener(new View.OnClickListener() {
+        uploadButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View view) {
-                TastyToast.makeText(getApplicationContext(), "please make sure that you are in a quite place.", TastyToast.LENGTH_LONG, TastyToast.WARNING);
-                speak();
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN){
+                    startRecording();
+                    return true;
+                } else if (motionEvent.getAction() == MotionEvent.ACTION_UP){
+                    stopRecording();
+                    return true;
+                }
+                return false;
             }
         });
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                registration();
                 if (flag == 1) {
-                    registration();
                     Intent intent = new Intent(Register.this, QuizQuestionsActivity.class);
                     startActivity(intent);
                 }
@@ -91,29 +113,41 @@ public class Register extends AppCompatActivity {
         });
     }
 
-    private void speak(){
-        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Please Say: I'll be the best one day.");
+    private void startRecording() {
+        recorder = new MediaRecorder();
+        recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        recorder.setOutputFile(fileName);
+        recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+
         try {
-            startActivityForResult(intent, REQUEST_CODE_SPEECH_INPUT);
+            recorder.prepare();
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "prepare() failed");
         }
-        catch (Exception e){
-            TastyToast.makeText(getApplicationContext(), ""+e.getMessage(), TastyToast.LENGTH_LONG, TastyToast.ERROR);
-        }
+
+        recorder.start();
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE_SPEECH_INPUT) {
-            if (resultCode == RESULT_OK && null != data) {
-                ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-                //ToDo: Upload text here and save it to database locally to compare it.
-                flag = 1;
+    private void stopRecording() {
+        recorder.stop();
+        recorder.release();
+        recorder = null;
+        uploadAudio();
+    }
+
+    private void uploadAudio(){
+        mProgress.setMessage("Uploading Audio...");
+        mProgress.show();
+        flag = 1;
+        StorageReference filePath = storageReference.child("Audio/new_Audio.3gp");
+        Uri uri = Uri.fromFile(new File(fileName));
+        filePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                mProgress.dismiss();
             }
-        }
+        });
     }
 
     private void registration(){

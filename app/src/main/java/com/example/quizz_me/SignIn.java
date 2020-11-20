@@ -2,17 +2,14 @@ package com.example.quizz_me;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.speech.RecognizerIntent;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -23,13 +20,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.sdsmdg.tastytoast.TastyToast;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
 public class SignIn extends AppCompatActivity {
     TextInputLayout textField, textFieldPass;
     ArrayList<String> resultedSpeech;
     EditText editText, editTextPass;
-    TextView textView;
+    TextView textView, passwordReset;
     Button nextButton;
     private ProgressBar progressBar;
     private FirebaseAuth mAuth;
@@ -46,6 +42,7 @@ public class SignIn extends AppCompatActivity {
         textFieldPass = findViewById(R.id.logPassword);
         editTextPass = findViewById(R.id.logUserPassword);
         progressBar = findViewById(R.id.progressBar2);
+        passwordReset = findViewById(R.id.passwordReset);
 
         textFieldPass.setEndIconOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,29 +71,13 @@ public class SignIn extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        mAuth = FirebaseAuth.getInstance();
-    }
-    private void speak(){
-        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Please Say: I'll be the best one day.");
-        try {
-            startActivityForResult(intent, REQUEST_CODE_SPEECH_INPUT);
-        }
-        catch (Exception e){
-            Toast.makeText(this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE_SPEECH_INPUT) {
-            if (resultCode == RESULT_OK && null != data) {
-                resultedSpeech = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+        passwordReset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(SignIn.this, ForgotPassword.class));
             }
-        }
+        });
+        mAuth = FirebaseAuth.getInstance();
     }
 
     private void Login(){
@@ -128,7 +109,7 @@ public class SignIn extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()){
-                    speak();
+                    // ToDo: call record label here.
                 } else {
                     TastyToast.makeText(getApplicationContext(), "Failed to register!", TastyToast.LENGTH_LONG, TastyToast.ERROR);
                     progressBar.setVisibility(View.GONE);
