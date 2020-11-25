@@ -39,6 +39,7 @@ public class Register extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private ProgressBar progressBar;
     private ProgressDialog mProgress;
+    private String tempEmail;
     private int flag = 0;
     Button nextButton, uploadButton;
     private MediaRecorder recorder;
@@ -140,7 +141,7 @@ public class Register extends AppCompatActivity {
         mProgress.setMessage("Uploading Audio...");
         mProgress.show();
         flag = 1;
-        StorageReference filePath = storageReference.child("Audio/new_Audio.3gp");
+        StorageReference filePath = storageReference.child("Audio/"+tempEmail+".3gp");
         Uri uri = Uri.fromFile(new File(fileName));
         filePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
@@ -152,6 +153,7 @@ public class Register extends AppCompatActivity {
 
     private void registration(){
         final String email = editText.getText().toString().trim();
+        tempEmail = email;
         final String password = editTextPassword.getText().toString().trim();
         if (email.isEmpty()){
             editText.setError("Email is required!");

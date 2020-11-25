@@ -1,8 +1,13 @@
 package com.example.quizz_me;
 
 import android.content.Intent;
+import android.media.MediaRecorder;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
 import android.util.Patterns;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,12 +18,18 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.sdsmdg.tastytoast.TastyToast;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class SignIn extends AppCompatActivity {
@@ -29,7 +40,7 @@ public class SignIn extends AppCompatActivity {
     Button nextButton;
     private ProgressBar progressBar;
     private FirebaseAuth mAuth;
-    private static final int REQUEST_CODE_SPEECH_INPUT = 1000;
+    private String tempEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,12 +67,11 @@ public class SignIn extends AppCompatActivity {
                 editText.setText("");
             }
         });
+
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Login();
-                //ToDo: Load voice from online database
-                //ToDo: If matched load quiz, else ask him to rerecord.
             }
         });
         textView.setOnClickListener(new View.OnClickListener() {
@@ -105,11 +115,14 @@ public class SignIn extends AppCompatActivity {
             return;
         }
         progressBar.setVisibility(View.VISIBLE);
+        tempEmail = email;
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()){
-                    // ToDo: call record label here.
+                    Intent intent = new Intent(SignIn.this, matchingVoice.class);
+                    intent.putExtra("email", tempEmail);
+                    startActivity(intent);
                 } else {
                     TastyToast.makeText(getApplicationContext(), "Failed to register!", TastyToast.LENGTH_LONG, TastyToast.ERROR);
                     progressBar.setVisibility(View.GONE);
@@ -117,5 +130,4 @@ public class SignIn extends AppCompatActivity {
             }
         });
     }
-
 }
