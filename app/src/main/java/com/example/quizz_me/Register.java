@@ -19,11 +19,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.SignInMethodQueryResult;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -32,6 +34,8 @@ import com.sdsmdg.tastytoast.TastyToast;
 
 import java.io.File;
 import java.io.IOException;
+
+import static android.view.View.GONE;
 
 public class Register extends AppCompatActivity {
     TextInputLayout textField, textFieldPass;
@@ -109,6 +113,7 @@ public class Register extends AppCompatActivity {
                 }
                 else {
                     TastyToast.makeText(getApplicationContext(), "please record your voice first.", TastyToast.LENGTH_LONG, TastyToast.ERROR);
+                    progressBar.setVisibility(GONE);
                 }
             }
         });
@@ -166,13 +171,13 @@ public class Register extends AppCompatActivity {
             return;
         }
         if (password.isEmpty()){
-            editText.setError("Password is required!");
-            editText.requestFocus();
+            editTextPassword.setError("Password is required!");
+            editTextPassword.requestFocus();
             return;
         }
         if (password.length() < 6){
-            editText.setError("Min password length should be 6 characters!");
-            editText.requestFocus();
+            editTextPassword.setError("Min password length should be 6 characters!");
+            editTextPassword.requestFocus();
             return;
         }
         progressBar.setVisibility(View.VISIBLE);
@@ -182,25 +187,25 @@ public class Register extends AppCompatActivity {
                 if (task.isSuccessful()){
                     User user = new User(email, password);
                     FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                            .setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()){
-                                TastyToast.makeText(getApplicationContext(), "User has been registered successfully!", TastyToast.LENGTH_LONG, TastyToast.SUCCESS);
-                                progressBar.setVisibility(View.GONE);
+                        .setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()){
+                            TastyToast.makeText(getApplicationContext(), "User has been registered successfully!", TastyToast.LENGTH_LONG, TastyToast.SUCCESS);
+                                progressBar.setVisibility(GONE);
                             }
                             else {
-                                TastyToast.makeText(getApplicationContext(), "Failed to register! Try again!", TastyToast.LENGTH_LONG, TastyToast.ERROR);
-                                progressBar.setVisibility(View.GONE);
+                                    TastyToast.makeText(getApplicationContext(), "Failed to register! Try again!", TastyToast.LENGTH_LONG, TastyToast.ERROR);
+                                    progressBar.setVisibility(GONE);
+                                }
                             }
-                        }
-                    });
-                }
-                else {
-                    TastyToast.makeText(getApplicationContext(), "Failed to register!", TastyToast.LENGTH_LONG, TastyToast.ERROR);
-                    progressBar.setVisibility(View.GONE);
-                }
+                        });
+                    }
+                    else {
+//                    TastyToast.makeText(getApplicationContext(), "Failed to register!", TastyToast.LENGTH_LONG, TastyToast.ERROR);
+                        progressBar.setVisibility(GONE);
+                    }
+                    }
+                });
             }
-        });
-    }
-}
+        }

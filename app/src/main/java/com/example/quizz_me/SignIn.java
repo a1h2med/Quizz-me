@@ -105,12 +105,12 @@ public class SignIn extends AppCompatActivity {
             return;
         }
         if (password.isEmpty()){
-            editText.setError("Password is required!");
+            editTextPass.setError("Password is required!");
             editText.requestFocus();
             return;
         }
         if (password.length() < 6){
-            editText.setError("Min password length should be 6 characters!");
+            editTextPass.setError("Min password length should be 6 characters!");
             editText.requestFocus();
             return;
         }

@@ -3,6 +3,7 @@ package com.example.quizz_me;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
@@ -17,10 +18,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.sdsmdg.tastytoast.TastyToast;
 
 public class ForgotPassword extends AppCompatActivity {
-    private TextInputLayout textField;
-    private EditText editText;
-    private Button resetButton;
-    private ProgressBar progressBar;
+    TextInputLayout textField;
+    EditText editText;
+    String email;
+    Button resetButton;
+    ProgressDialog mProgress;
     FirebaseAuth auth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +32,7 @@ public class ForgotPassword extends AppCompatActivity {
         editText = findViewById(R.id.resetUserNameTextField);
         resetButton = findViewById(R.id.reset);
         auth = FirebaseAuth.getInstance();
+        mProgress = new ProgressDialog(this);
 
         textField.setEndIconOnClickListener(new View.OnClickListener() {
             @Override
@@ -45,19 +48,19 @@ public class ForgotPassword extends AppCompatActivity {
         });
     }
     private void resetPassword(){
-        String email = editText.getText().toString().trim();
+        email = editText.getText().toString().trim();
 
         if (email.isEmpty()){
             editText.setError("Email is required!");
             editText.requestFocus();
             return;
         }
-        if (Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
             editText.setError("Please provide a valid email!");
             editText.requestFocus();
             return;
         }
-        progressBar.setVisibility(View.VISIBLE);
+        mProgress.show();
         auth.sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
@@ -68,5 +71,6 @@ public class ForgotPassword extends AppCompatActivity {
                 }
             }
         });
+        mProgress.dismiss();
     }
 }
